@@ -1,0 +1,73 @@
+{
+  "root": "apps/rfind-web",
+  "sourceRoot": "apps/rfind-web/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/web:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/rfind-web",
+        "index": "apps/rfind-web/src/index.html",
+        "baseHref": "/",
+        "main": "apps/rfind-web/src/main.tsx",
+        "polyfills": "apps/rfind-web/src/polyfills.ts",
+        "tsConfig": "apps/rfind-web/tsconfig.app.json",
+        "assets": [
+          "apps/rfind-web/src/favicon.ico",
+          "apps/rfind-web/src/assets"
+        ],
+        "styles": ["apps/rfind-web/src/styles.css"],
+        "scripts": [],
+        "webpackConfig": "@nrwl/react/plugins/webpack"
+      },
+      "configurations": {
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/rfind-web/src/environments/environment.ts",
+              "with": "apps/rfind-web/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/web:dev-server",
+      "options": {
+        "buildTarget": "rfind-web:build",
+        "hmr": true,
+        "proxyConfig": "apps/rfind-web/proxy.conf.json"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "rfind-web:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/rfind-web/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/rfind-web"],
+      "options": {
+        "jestConfig": "apps/rfind-web/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
