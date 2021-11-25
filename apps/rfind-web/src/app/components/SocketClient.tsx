@@ -1,0 +1,43 @@
+import React, { useEffect, useState } from "react";
+import {io} from "socket.io-client";
+import {rebinMax} from '@rfind-web/utils'
+import {Message} from '@rfind-web/api-interfaces'
+
+
+const ENDPOINT = "http://127.0.0.1:4001";
+
+type BeautifiedResponse = {
+  time: Date;
+  bins: Array<number>;
+}
+
+interface ClientComponentProps {
+}
+
+const ClientComponent: React.FC<ClientComponentProps> = () => {
+  const [response, setResponse] = useState<BeautifiedResponse>();
+
+  useEffect(() => {
+    const socket = io(ENDPOINT);
+    socket.on("FromAPI", (data: Message) => {
+      const time = new Date(data.timestamp)
+      const digestableSpectra = rebinMax(data.bins, 0, -1, 1024)
+      const temp = {time: time, bins: digestableSpectra}
+      console.log(temp)
+      setResponse(temp);
+    });
+
+    // CLEAN UP THE EFFECT
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  return (
+    <p>
+      At <time dateTime={response?.time.toString()}>{response?.time.toString()}</time> there were {response?.bins.length} bins.
+    </p>
+  );
+}
+
+export default ClientComponent

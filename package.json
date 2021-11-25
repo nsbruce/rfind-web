@@ -3,9 +3,11 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "nx serve",
+    "start:api": "nx serve api",
+    "start:app": "nx serve rfind-web",
     "build": "nx build",
-    "test": "nx test"
+    "test": "nx test",
+    "format": "prettier --write */**/*.{ts,tsx}"
   },
   "private": true,
   "dependencies": {
@@ -14,7 +16,10 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "regenerator-runtime": "0.13.7",
-    "tslib": "^2.0.0"
+    "socket.io": "^4.4.0",
+    "socket.io-client": "^4.4.0",
+    "tslib": "^2.0.0",
+    "zeromq": "6.0.0-beta.6"
   },
   "devDependencies": {
     "@nrwl/cli": "13.2.2",

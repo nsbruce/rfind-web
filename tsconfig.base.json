@@ -15,7 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@rfind-web/api-interfaces": ["libs/api-interfaces/src/index.ts"]
+      "@rfind-web/api-interfaces": ["libs/api-interfaces/src/index.ts"],
+      "@rfind-web/utilities": ["libs/utilities/src/index.ts"],
+      "@rfind-web/utils": ["libs/utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

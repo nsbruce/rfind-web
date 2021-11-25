@@ -1,3 +1,4 @@
 export interface Message {
-  message: string;
+  timestamp: number;
+  bins: Array<number>;
 }
