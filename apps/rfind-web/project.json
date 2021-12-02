@@ -18,7 +18,7 @@
           "apps/rfind-web/src/favicon.ico"
         ],
         "scripts": [],
-        "webpackConfig": "@nrwl/react/plugins/webpack"
+        "webpackConfig": "apps/rfind-web/webpack.config.js"
       },
       "configurations": {
         "production": {
@@ -42,7 +42,8 @@
       "options": {
         "buildTarget": "rfind-web:build",
         "hmr": true,
-        "proxyConfig": "apps/rfind-web/proxy.conf.json"
+        "proxyConfig": "apps/rfind-web/proxy.conf.json",
+        "webpackConfig": "apps/rfind-web/webpack.config.js"
       },
       "configurations": {
         "production": {
