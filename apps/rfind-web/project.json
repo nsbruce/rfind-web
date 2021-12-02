@@ -15,10 +15,8 @@
         "polyfills": "apps/rfind-web/src/polyfills.ts",
         "tsConfig": "apps/rfind-web/tsconfig.app.json",
         "assets": [
-          "apps/rfind-web/src/favicon.ico",
-          "apps/rfind-web/src/assets"
+          "apps/rfind-web/src/favicon.ico"
         ],
-        "styles": ["apps/rfind-web/src/styles.css"],
         "scripts": [],
         "webpackConfig": "@nrwl/react/plugins/webpack"
       },

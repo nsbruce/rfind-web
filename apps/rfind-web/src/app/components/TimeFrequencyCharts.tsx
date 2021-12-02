@@ -1,5 +1,8 @@
 import React, {useEffect, useState, useCallback, useMemo} from 'react';
+
 import {Integration} from '@rfind-web/api-interfaces';
+import {REBINNED_SPECTRA_SIZE, HZ_PER_DATA_POINT, BOTTOM_CHART_WIDTH, BOTTOM_CHART_HEIGHT, DEFAULT_REBINNED_FREQS, DEFAULT_SPECTROGRAM_VALUES} from "@rfind-web/const";
+
 import { UniformHeatmapDataSeries } from "scichart/Charting/Model/UniformHeatmapDataSeries";
 import { XyDataSeries } from "scichart/Charting/Model/XyDataSeries";
 import { SciChartSurface } from "scichart/Charting/Visuals/SciChartSurface";
@@ -15,20 +18,8 @@ interface TimeFrequencyChartsProps {
     latestIntegration: Integration;
 }
 
-
-const divElementIdFttChart = "sciChart1";
+const divElementIdFftChart = "sciChart1";
 const divElementIdSpecgramChart = "sciChart2";
-
-const TOP_CHART_WIDTH = 600;
-const TOP_CHART_HEIGHT = 600;
-const BOTTOM_CHART_WIDTH = 288;
-const BOTTOM_CHART_HEIGHT = 289;
-const CHART_MARGIN = 14;
-
-const REBINNED_SPECTRA_SIZE = 1024;
-const HZ_PER_DATA_POINT = 600000/REBINNED_SPECTRA_SIZE;
-
-
 
 
 const TimeFrequencyCharts: React.FC<TimeFrequencyChartsProps> = (props) => {
@@ -37,32 +28,32 @@ const TimeFrequencyCharts: React.FC<TimeFrequencyChartsProps> = (props) => {
     const [fftChartInitialized, setFftChartInitialized] = useState<boolean>(false);
     const [specgramChartInitialized, setSpecgramChartInitialized] = useState<boolean>(false);
     
-    let fftXValues: number[];
-    let spectrogramValues: number [][];
+    const [fftXValues, setFftXValues] = useState<number[]>(DEFAULT_REBINNED_FREQS)
+    const [spectrogramValues, setSpectrogramValues] = useState<number[][]>(DEFAULT_SPECTROGRAM_VALUES);
 
-    let fftDS: XyDataSeries;
-    let spectrogramDS: UniformHeatmapDataSeries;
+    const [fftDS, setFftDS] = useState<XyDataSeries>();
+    const [spectrogramDS, setSpectrogramDS] = useState<UniformHeatmapDataSeries>();
 
     const updateAnalysers = useCallback((): void=> {
 
         // Update FFT Chart
-        if (fftChartInitialized){
+        if (fftChartInitialized && fftDS){
             fftDS.clear();
             fftDS.appendRange(fftXValues, latestIntegration.bins);
         }
 
         // Update Spectrogram Chart
-        if (specgramChartInitialized){
+        if (specgramChartInitialized && spectrogramDS){
             spectrogramValues.shift();
             spectrogramValues.push(latestIntegration.bins);
             spectrogramDS.setZValues(spectrogramValues);
         }
-    },[latestIntegration, fftChartInitialized, specgramChartInitialized])
+    },[fftChartInitialized, specgramChartInitialized, fftDS, fftXValues, latestIntegration.bins, spectrogramValues, spectrogramDS])
 
 
     const initFftChart = useCallback(async () => {
         const { sciChartSurface, wasmContext } = await SciChartSurface.create(
-            divElementIdFttChart,
+            divElementIdFftChart,
             {
                 widthAspect: BOTTOM_CHART_WIDTH,
                 heightAspect: BOTTOM_CHART_HEIGHT
@@ -85,11 +76,7 @@ const TimeFrequencyCharts: React.FC<TimeFrequencyChartsProps> = (props) => {
         });
         sciChartSurface.yAxes.add(yAxis);
 
-        fftDS = new XyDataSeries(wasmContext);
-        fftXValues = new Array<number>(REBINNED_SPECTRA_SIZE);
-        for (let i = 0; i < REBINNED_SPECTRA_SIZE; i++) {
-            fftXValues[i] = i * HZ_PER_DATA_POINT;
-        }
+        setFftDS(new XyDataSeries(wasmContext));
 
         const rs = new FastColumnRenderableSeries(wasmContext, {
             stroke: "#E6E6FA",
@@ -101,17 +88,10 @@ const TimeFrequencyCharts: React.FC<TimeFrequencyChartsProps> = (props) => {
         setFftChartInitialized(true);
 
         return sciChartSurface;
-    },[setFftChartInitialized]);
+    },[fftDS]);
 
     // SPECTROGRAM CHART
     const initSpectogramChart = useCallback(async () => {
-        spectrogramValues = new Array<number[]>(REBINNED_SPECTRA_SIZE);
-        for (let i = 0; i < REBINNED_SPECTRA_SIZE; i++) {
-            spectrogramValues[i] = new Array<number>(REBINNED_SPECTRA_SIZE);
-            for (let j = 0; j < REBINNED_SPECTRA_SIZE; j++) {
-                spectrogramValues[i][j] = 0;
-            }
-        }
 
         const { sciChartSurface, wasmContext } = await SciChartSurface.create(
             divElementIdSpecgramChart,
@@ -137,13 +117,15 @@ const TimeFrequencyCharts: React.FC<TimeFrequencyChartsProps> = (props) => {
         });
         sciChartSurface.yAxes.add(yAxis);
 
-        spectrogramDS = new UniformHeatmapDataSeries(wasmContext, {
-            xStart: 0,
-            xStep: 1,
-            yStart: 0,
-            yStep: 1,
-            zValues: spectrogramValues
-        });
+        setSpectrogramDS(
+            new UniformHeatmapDataSeries(wasmContext, {
+                xStart: 0,
+                xStep: 1,
+                yStart: 0,
+                yStep: 1,
+                zValues: spectrogramValues
+            })
+        );
 
         const rs = new UniformHeatmapRenderableSeries(wasmContext, {
             dataSeries: spectrogramDS,
@@ -165,22 +147,22 @@ const TimeFrequencyCharts: React.FC<TimeFrequencyChartsProps> = (props) => {
         setSpecgramChartInitialized(true)
 
         return sciChartSurface;
-    },[setSpecgramChartInitialized]);
+    },[spectrogramDS, spectrogramValues]);
 
     const charts: SciChartSurface[] = [];
 
-    const pushCharts = useEffect(() => {
-        async function pushChartsInternal(){
-            charts.push(await initFftChart());
-            charts.push(await initSpectogramChart());
-        }
-        pushChartsInternal()
+    // const pushCharts = useEffect(() => {
+    async function pushCharts(){
+        charts.push(await initFftChart());
+        charts.push(await initSpectogramChart());
+    }
+    pushCharts()
 
-    },[])
+    // },[charts, initFftChart, initSpectogramChart])
 
     return (
         <React.Fragment>
-            <div id={divElementIdFttChart} />
+            <div id={divElementIdFftChart} />
             <div id={divElementIdSpecgramChart} />
         </React.Fragment>
 

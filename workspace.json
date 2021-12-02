@@ -3,9 +3,9 @@
   "projects": {
     "api": "apps/api",
     "api-interfaces": "libs/api-interfaces",
+    "const": "libs/const",
     "rfind-web": "apps/rfind-web",
     "rfind-web-e2e": "apps/rfind-web-e2e",
-    "utilities": "libs/utilities",
     "utils": "libs/utils"
   }
 }
