@@ -8405,6 +8405,13 @@ schema-utils@^4.0.0:
     ajv-formats "^2.1.1"
     ajv-keywords "^5.0.0"
 
+scichart@^2.0.2146:
+  version "2.0.2146"
+  resolved "https://registry.yarnpkg.com/scichart/-/scichart-2.0.2146.tgz#d458ec16f24570ec208251c7936514bf55ab5cc3"
+  integrity sha512-wKj2rSYf1kQRKdAHr8ZydXaC4jDd+wF5atHeY2JnijNp2M+vpV8YRo+wb22shbSLBbTV4aSqnyPoIfQaA4pBGw==
+  dependencies:
+    typescript "^3.9.6"
+
 secure-compare@3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/secure-compare/-/secure-compare-3.0.1.tgz#f1a0329b308b221fae37b9974f3d578d0ca999e3"
@@ -9338,6 +9345,11 @@ typedarray-to-buffer@^3.1.5:
   integrity sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q==
   dependencies:
     is-typedarray "^1.0.0"
+
+typescript@^3.9.6:
+  version "3.9.10"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.10.tgz#70f3910ac7a51ed6bef79da7800690b19bf778b8"
+  integrity sha512-w6fIxVE/H1PkLKcCPsFqKE7Kv7QUwhU8qQY2MueZXWx5cPZdwFupLgKK3vntcK98BtNHZtAF4LA/yl2a7k8R6Q==
 
 typescript@~4.4.3:
   version "4.4.4"

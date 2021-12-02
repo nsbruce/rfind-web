@@ -1,21 +1,17 @@
 import React, { useEffect, useState } from "react";
 import {io} from "socket.io-client";
 import {rebinMax} from '@rfind-web/utils'
-import {Message} from '@rfind-web/api-interfaces'
+import {Message, Integration} from '@rfind-web/api-interfaces'
 
 
-const ENDPOINT = "http://127.0.0.1:4001";
+const ENDPOINT = "http://localhost:4001";
 
-type BeautifiedResponse = {
-  time: Date;
-  bins: Array<number>;
-}
 
 interface ClientComponentProps {
 }
 
 const ClientComponent: React.FC<ClientComponentProps> = () => {
-  const [response, setResponse] = useState<BeautifiedResponse>();
+  const [response, setResponse] = useState<Integration>();
 
   useEffect(() => {
     const socket = io(ENDPOINT);
@@ -23,7 +19,6 @@ const ClientComponent: React.FC<ClientComponentProps> = () => {
       const time = new Date(data.timestamp)
       const digestableSpectra = rebinMax(data.bins, 0, -1, 1024)
       const temp = {time: time, bins: digestableSpectra}
-      console.log(temp)
       setResponse(temp);
     });
 
