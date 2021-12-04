@@ -25,6 +25,12 @@ const divElementIdSpecgramChart = "sciChart2";
 const TimeFrequencyCharts: React.FC<TimeFrequencyChartsProps> = (props) => {
     const {latestIntegration} = props;
 
+    // const latestIntegration = useMemo(()=>{
+    //     console.log("Got a new int")
+    //     return latestInt
+
+    // },[latestInt])
+
     const drawCharts = async () => {
 
         // const [fftChartInitialized, setFftChartInitialized] = useState<boolean>(false);
@@ -52,8 +58,8 @@ const TimeFrequencyCharts: React.FC<TimeFrequencyChartsProps> = (props) => {
         //     }
         // },[fftChartInitialized, specgramChartInitialized, fftDS, fftXValues, latestIntegration, spectrogramValues, spectrogramDS])
 
-        let fftXValues: number[];
-        let spectrogramValues: number[][];
+        const fftXValues: number[] = DEFAULT_REBINNED_FREQS;
+        let spectrogramValues: number[][] = DEFAULT_SPECTROGRAM_VALUES;
 
         let fftDS: XyDataSeries;
         let spectrogramDS: UniformHeatmapDataSeries;
@@ -62,7 +68,10 @@ const TimeFrequencyCharts: React.FC<TimeFrequencyChartsProps> = (props) => {
 
         function updateAnalysers(frame: number): void {
 
+            console.log("In updateAnalysers", latestIntegration.time, latestTime)
+
             if (latestIntegration.time !== latestTime){
+                console.log("Actually going to update stuff")
     
                 // Update FFT Chart
                 fftDS.clear();
@@ -196,7 +205,7 @@ const TimeFrequencyCharts: React.FC<TimeFrequencyChartsProps> = (props) => {
         let frameCounter = 0;
         const updateChart = () => {
             updateAnalysers(frameCounter++);
-            timerId = setTimeout(updateChart, 20);
+            timerId = setTimeout(updateChart, 500);
         };
         updateChart();
 

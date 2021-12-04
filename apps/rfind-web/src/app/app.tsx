@@ -4,21 +4,22 @@ import {rebinMax} from '@rfind-web/utils'
 import {Message, Integration} from '@rfind-web/api-interfaces'
 import TimeFrequencyCharts from "./components/TimeFrequencyCharts";
 import {SOCKETIO_ENDPOINT} from "@rfind-web/const";
-// import ClientComponent from './components/SocketClient';
-
-const DEFAULT_INTEGRATION:Integration = {bins:[...Array(1024)], time: new Date()}
+import FFTChart from "./components/FFTChart"
+import {DEFAULT_FFT_VALUES} from '@rfind-web/const'
 
 
 function App() {
-  const [latestIntegration, setLatestIntegration] = useState<Integration>(DEFAULT_INTEGRATION);
+  const [latestIntegration, setLatestIntegration] = useState<Integration>({time: new Date(), bins:DEFAULT_FFT_VALUES});
 
   useEffect(() => {
+    console.log("setting up socket")
     const socket = io(SOCKETIO_ENDPOINT);
     socket.on("FromAPI", (data: Message) => {
       const time = new Date(data.timestamp)
       const digestableSpectra = rebinMax(data.bins, 0, -1, 1024)
       const temp = {time: time, bins: digestableSpectra}
       setLatestIntegration(temp);
+      console.log("got new data from api")
     });
 
     // CLEAN UP THE EFFECT
@@ -29,12 +30,13 @@ function App() {
 
 
   return (
-    <>
+    <div style={{width: '100%', height: '100%'}}>
     <p>
       At <time dateTime={latestIntegration?.time.toString()}>{latestIntegration?.time.toString()}</time> there were {latestIntegration?.bins.length} bins.
     </p>
-    <TimeFrequencyCharts latestIntegration={latestIntegration} />
-    </>
+    {/* <TimeFrequencyCharts latestIntegration={latestIntegration} /> */}
+    <FFTChart latestIntegration={latestIntegration} />
+    </div>
   );
 }
 

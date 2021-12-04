@@ -18,3 +18,4 @@ for (let i = 0; i < REBINNED_SPECTRA_SIZE; i++) {
 }
 
 export const DEFAULT_SPECTROGRAM_VALUES = default_spectrogram_values;
+export const DEFAULT_FFT_VALUES = [...Array(REBINNED_SPECTRA_SIZE).fill(0)]
