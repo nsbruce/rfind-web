@@ -1,3 +1,10 @@
+/*
+* Nicholas Bruce
+
+Adapted from Alexufo on Github (https://github.com/Alexufo/Responsive-waveform)
+Original code 2013 by Sveinn Steinarsson (http://hdl.handle.net/1946/15343)
+*/
+
 function largestTriangleThreeBuckets(data: Array<number>, threshold:number):Array<number> {
   // data is linear array [90,87,97...]
   const data_length = data.length;
