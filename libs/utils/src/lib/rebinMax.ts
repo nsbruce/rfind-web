@@ -1,7 +1,4 @@
-export function rebinMax(  arr: Array<number>,
-  idx0: number,
-  idx1: number,
-  len: number): Array<number> {
+export function rebinMax(  arr: Array<number>, idx0: number, idx1: number, len: number): Array<number> {
   const chunks = []
   let i = 0;
   

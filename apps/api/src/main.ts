@@ -23,11 +23,10 @@ async function initZmq() {
   try {
     await zmqSock.bind("tcp://127.0.0.1:"+zmqPort)
     for await (const [topic, msg] of zmqSock) {
-      const interpreted = new Float32Array(msg.buffer)
-      const spectra = [...interpreted]
+      const spectra = new Float32Array(msg.buffer)
       const timestamp = parseFloat(topic.toString())*1000 //python is ms JS is s
 
-      zmqDataEmitter.emit('integration', {timestamp: timestamp, bins: spectra} as Message)
+      zmqDataEmitter.emit('integration', {timestamp: timestamp, bins: [...spectra]} as Message)
 
     }
   } catch (err) {
