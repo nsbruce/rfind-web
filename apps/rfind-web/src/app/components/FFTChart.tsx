@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback, useMemo, useRef} from 'react';
+import React, {useEffect, useCallback, useRef} from 'react';
 
 import {Integration} from '@rfind-web/api-interfaces';
 import {FULL_FREQS, DEFAULT_FFT_VALUES, DISPLAYED_TIME_LENGTH, REBINNED_SPECTRA_LENGTH} from "@rfind-web/const";
@@ -151,8 +151,8 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
 
     return (
         <>
-            <div id={divElementIdFftChart} style={{height:'30vh'}} />
-            <div id={divElementIdSpectrogramChart} style={{height:'60vh'}} />
+            <div id={divElementIdFftChart} style={{height:'30vh', width: '100vw'}} />
+            <div id={divElementIdSpectrogramChart} style={{height:'60vh', width:'100vw'}} />
         </>
     );
 }

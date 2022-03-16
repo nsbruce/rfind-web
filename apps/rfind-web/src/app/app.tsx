@@ -1,12 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {io} from "socket.io-client";
-import {rebinMax} from '@rfind-web/utils'
 import {Message, Integration} from '@rfind-web/api-interfaces'
-// import TimeFrequencyCharts from "./components/TimeFrequencyCharts";
 import {SOCKETIO_ENDPOINT} from "@rfind-web/const";
 import FFTChart from "./components/FFTChart"
 import {DEFAULT_FFT_VALUES} from '@rfind-web/const'
-import {NumberArray} from 'scichart/types/NumberArray'
 
 
 function App() {
@@ -31,11 +28,10 @@ function App() {
 
 
   return (
-    <div style={{display:'flex', flexDirection:'column', height:'95vh'}}>
+    <div style={{display:'flex', flexDirection:'column', height:'100vh', width: '100vw'}}>
     <p>
       At <time dateTime={latestIntegration?.time.toString()}>{latestIntegration?.time.toString()}</time> there were {latestIntegration?.bins.length} bins.
     </p>
-    {/* <TimeFrequencyCharts latestIntegration={latestIntegration} /> */}
     <FFTChart latestIntegration={latestIntegration} />
     </div>
   );
