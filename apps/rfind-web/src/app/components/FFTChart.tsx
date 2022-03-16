@@ -1,7 +1,7 @@
 import React, {useEffect, useCallback, useRef} from 'react';
 
 import {Integration} from '@rfind-web/api-interfaces';
-import {FULL_FREQS, DEFAULT_FFT_VALUES, DISPLAYED_TIME_LENGTH, REBINNED_SPECTRA_LENGTH} from "@rfind-web/const";
+import {FULL_FREQS, DEFAULT_FFT_VALUES, DISPLAYED_TIME_LENGTH, REBINNED_SPECTRA_LENGTH, SPECTRA_MIN_VALUE, SPECTRA_MAX_VALUE} from "@rfind-web/const";
 
 import { XyDataSeries } from "scichart/Charting/Model/XyDataSeries";
 import { SciChartSurface } from "scichart/Charting/Visuals/SciChartSurface";
@@ -59,16 +59,14 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
 
         const xAxis = new NumericAxis(wasmContext, {
             drawMajorTickLines: false,
-            maxAutoTicks: 5,
             axisAlignment: EAxisAlignment.Top
         });
         sciChartSurface.xAxes.add(xAxis);
 
         const yAxis = new NumericAxis(wasmContext, {
             axisAlignment: EAxisAlignment.Right,
-            visibleRange: new NumberRange(14, 18),
+            visibleRange: new NumberRange(SPECTRA_MIN_VALUE, SPECTRA_MAX_VALUE),
             autoRange: EAutoRange.Once,
-            maxAutoTicks: 5
         });
         sciChartSurface.yAxes.add(yAxis);
 
@@ -92,7 +90,7 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
             drawMajorTickLines: false,
             drawMinorGridLines: false,
             drawLabels: false,
-            autoRange: EAutoRange.Always
+            autoRange: EAutoRange.Always,
         })
         sciChartSurface.xAxes.add(xAxis)
 
@@ -109,8 +107,8 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
             resamplingMode: EResamplingMode.Max,
             dataSeries: spectrogramDSref.current,
             colorMap: new HeatmapColorMap({
-                minimum: 14,
-                maximum: 18,
+                minimum: SPECTRA_MIN_VALUE,
+                maximum: SPECTRA_MAX_VALUE,
                 gradientStops: [
                     { offset: 0, color: "#000000" },
                     { offset: 0.0001, color: "#00008B" },

@@ -14,8 +14,6 @@ function App() {
     const socket = io(SOCKETIO_ENDPOINT);
     socket.on("FromAPI", (data: Message) => {
       const time = new Date(data.timestamp)
-      // const digestableSpectra = rebinMax(data.bins, 0, -1, 1024)
-      // setLatestIntegration({time: time, bins: digestableSpectra});
       setLatestIntegration({time: time, bins: data.bins.map(Number)});
       console.log("got new data from api")
     });
