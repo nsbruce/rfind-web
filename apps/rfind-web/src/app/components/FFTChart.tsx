@@ -19,7 +19,7 @@ import { UniformHeatmapRenderableSeries } from 'scichart/Charting/Visuals/Render
 import { HeatmapColorMap } from 'scichart/Charting/Visuals/RenderableSeries/HeatmapColorMap';
 import {zeroArray2D} from 'scichart/utils/zeroArray2D'
 import { EDataChangeType } from 'scichart/Charting/Model/IDataSeries';
-import { rebinMax } from '@rfind-web/utils';
+import { rebinMax, largestTriangleThreeBuckets } from '@rfind-web/utils';
 
 interface FFTChartsProps {
     latestIntegration: Integration;
@@ -45,7 +45,9 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
         const currentIdxs = renderableFFT.current?.getIndicesRange(renderableFFT.current.xAxis.visibleRange)
         if (spectrogramDSref.current) {
             spectrogramValuesRef.current.shift();
-            spectrogramValuesRef.current.push(rebinMax(latestIntegration.bins,currentIdxs?.min || 0, currentIdxs?.max || -1,REBINNED_SPECTRA_LENGTH))
+            // spectrogramValuesRef.current.push(rebinMax(latestIntegration.bins,currentIdxs?.min || 0, currentIdxs?.max || -1,REBINNED_SPECTRA_LENGTH))
+            spectrogramValuesRef.current.push(largestTriangleThreeBuckets(latestIntegration.bins.slice(currentIdxs?.min || 0, currentIdxs?.max || -1),REBINNED_SPECTRA_LENGTH))
+            
             spectrogramDSref.current.notifyDataChanged(EDataChangeType.Append) //TODO Check whether this type should be update
 
         }
