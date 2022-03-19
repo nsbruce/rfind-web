@@ -1,15 +1,15 @@
 import React, {useEffect, useCallback, useRef} from 'react';
 
 import {Integration} from '@rfind-web/api-interfaces';
-import {FULL_FREQS, DEFAULT_FFT_VALUES, DISPLAYED_TIME_LENGTH, REBINNED_SPECTRA_LENGTH, SPECTRA_MIN_VALUE, SPECTRA_MAX_VALUE} from "@rfind-web/const";
+import {FULL_FREQS, DEFAULT_FFT_VALUES, DISPLAYED_TIME_LENGTH, REBINNED_SPECTRA_LENGTH, SPECTRA_MIN_VALUE, SPECTRA_MAX_VALUE, INTEGRATION_RATE} from "@rfind-web/const";
+import { rebinMax, largestTriangleThreeBuckets, number2SIString } from '@rfind-web/utils';
 
 import { XyDataSeries } from "scichart/Charting/Model/XyDataSeries";
 import { SciChartSurface } from "scichart/Charting/Visuals/SciChartSurface";
-import { NumericAxis } from "scichart/Charting/Visuals/Axis/NumericAxis";
+import { INumericAxisOptions, NumericAxis } from "scichart/Charting/Visuals/Axis/NumericAxis";
 import { EAxisAlignment } from "scichart/types/AxisAlignment";
 import { NumberRange } from "scichart/Core/NumberRange";
 import { FastLineRenderableSeries } from 'scichart/Charting/Visuals/RenderableSeries/FastLineRenderableSeries';
-import { EAutoRange } from 'scichart/types/AutoRange';
 import { ZoomExtentsModifier } from 'scichart/Charting/ChartModifiers/ZoomExtentsModifier';
 import { EXyDirection } from 'scichart/types/XyDirection';
 import { RubberBandXyZoomModifier } from 'scichart/Charting/ChartModifiers/RubberBandXyZoomModifier';
@@ -19,10 +19,16 @@ import { UniformHeatmapRenderableSeries } from 'scichart/Charting/Visuals/Render
 import { HeatmapColorMap } from 'scichart/Charting/Visuals/RenderableSeries/HeatmapColorMap';
 import {zeroArray2D} from 'scichart/utils/zeroArray2D'
 import { EDataChangeType } from 'scichart/Charting/Model/IDataSeries';
-import { rebinMax, largestTriangleThreeBuckets } from '@rfind-web/utils';
+import { ENumericFormat } from 'scichart/types/NumericFormat';
 
 interface FFTChartsProps {
     latestIntegration: Integration;
+}
+
+const sharedYAxisProps:INumericAxisOptions = {
+    axisAlignment: EAxisAlignment.Right,
+    axisThickness: 20,
+    axisTitleStyle: {fontSize: 16}
 }
 
 const divElementIdFftChart = "sciChart1";
@@ -61,14 +67,17 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
 
         const xAxis = new NumericAxis(wasmContext, {
             drawMajorTickLines: false,
-            axisAlignment: EAxisAlignment.Top
+            axisAlignment: EAxisAlignment.Top,
+            labelFormat: ENumericFormat.SignificantFigures,
+            labelPostfix: ' Hz'
         });
+        xAxis.labelProvider.formatLabel = number2SIString
         sciChartSurface.xAxes.add(xAxis);
 
         const yAxis = new NumericAxis(wasmContext, {
-            axisAlignment: EAxisAlignment.Right,
             visibleRange: new NumberRange(SPECTRA_MIN_VALUE, SPECTRA_MAX_VALUE),
-            autoRange: EAutoRange.Once,
+            axisTitle: 'Amp. (dB)',
+            ...sharedYAxisProps
         });
         sciChartSurface.yAxes.add(yAxis);
 
@@ -89,24 +98,25 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
         );
 
         const xAxis = new NumericAxis(wasmContext, {
-            drawMajorTickLines: false,
-            drawMinorGridLines: false,
             drawLabels: false,
-            autoRange: EAutoRange.Always,
         })
         sciChartSurface.xAxes.add(xAxis)
 
         const yAxis = new NumericAxis(wasmContext, {
-            drawMajorTickLines: false,
-            drawMinorGridLines: false,
-            drawLabels: false,
-            autoRange: EAutoRange.Always
+            axisTitle: 'Time passed (s)',
+            ...sharedYAxisProps
         })
+        yAxis.labelProvider.formatLabel = (dataValue:number) => {
+            let label = Math.abs(dataValue-DISPLAYED_TIME_LENGTH)
+            label *= INTEGRATION_RATE //seconds
+            // label /= 60 //minutes
+            return label.toFixed(0)
+        }
         sciChartSurface.yAxes.add(yAxis)
 
         spectrogramDSref.current = new UniformHeatmapDataSeries(wasmContext, {xStart: 0, xStep:1, yStart:0, yStep:1, zValues: spectrogramValuesRef.current})
         const rs = new UniformHeatmapRenderableSeries(wasmContext, {
-            resamplingMode: EResamplingMode.Max,
+            resamplingMode: EResamplingMode.None,
             dataSeries: spectrogramDSref.current,
             colorMap: new HeatmapColorMap({
                 minimum: SPECTRA_MIN_VALUE,

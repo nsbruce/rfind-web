@@ -7,7 +7,9 @@
     "start:app": "nx serve rfind-web",
     "build": "nx build",
     "test": "nx test",
-    "format": "prettier --write */**/*.{ts,tsx}"
+    "test:all": "nx run-many --all --target=test",
+    "format": "prettier --write */**/*.{ts,tsx}",
+    "make:envfile": "ts-node libs/environment/src/generate"
   },
   "private": true,
   "dependencies": {

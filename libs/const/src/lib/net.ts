@@ -1,1 +1,0 @@
-export const SOCKETIO_ENDPOINT="http://localhost:4001"
