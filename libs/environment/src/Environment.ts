@@ -4,6 +4,7 @@ export interface Environment {
   ZMQ_PROTOCOL: string;
   ZMQ_IP: string;
   PRODUCTION: boolean;
+  SCICHART_RUNTIME_KEY:string;
   SOCKETIO_PORT: number;
   SOCKETIO_PROTOCOL: string;
   SOCKETIO_IP: string;
@@ -23,6 +24,7 @@ export const DEFAULT: Environment = {
   ZMQ_PROTOCOL: 'tcp',
   ZMQ_IP: '127.0.0.1',
   PRODUCTION: false,
+  SCICHART_RUNTIME_KEY: '',
   SOCKETIO_PORT: 4001,
   SOCKETIO_PROTOCOL: 'http',
   SOCKETIO_IP: 'localhost',
