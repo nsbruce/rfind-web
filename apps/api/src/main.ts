@@ -17,7 +17,7 @@ const httpServer = http.createServer(app);
 const zmqSub = new Subscriber()
 zmqSub.subscribe()
 
-const io = new Server(httpServer, {cors: {origin: sioAddr, methods: ['GET', 'POST']}}); //TODO this origin is not good
+const io = new Server(httpServer, {cors: {origin: sioAddr, methods: 'GET'}}); //TODO this origin is not good
 
 async function initZmq() {
   try {
