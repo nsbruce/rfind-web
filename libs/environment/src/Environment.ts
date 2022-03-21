@@ -7,7 +7,8 @@ export interface Environment {
   SCICHART_RUNTIME_KEY:string;
   SOCKETIO_PORT: number;
   SOCKETIO_PROTOCOL: string;
-  SOCKETIO_IP: string;
+  SOCKETIO_APP_IP: string;
+  SOCKETIO_API_IP: string;
   START_FREQ: number;
   BANDWIDTH: number;
   SPECTRA_MAX_VALUE: number;
@@ -27,7 +28,8 @@ export const DEFAULT: Environment = {
   SCICHART_RUNTIME_KEY: '',
   SOCKETIO_PORT: 4001,
   SOCKETIO_PROTOCOL: 'http',
-  SOCKETIO_IP: 'localhost',
+  SOCKETIO_APP_IP: 'localhost',
+  SOCKETIO_API_IP: 'localhost',
   START_FREQ: 0,
   BANDWIDTH: 2e9,
   SPECTRA_MAX_VALUE: 18,

@@ -6,7 +6,8 @@ import {Message} from '@rfind-web/api-interfaces'
 import env from '@rfind-web/environment'
 
 const sioPort = env.SOCKETIO_PORT;
-const sioAddr = env.SOCKETIO_PROTOCOL+'://'+env.SOCKETIO_IP+':'+sioPort
+// const sioAddr = env.SOCKETIO_PROTOCOL+'://'+env.SOCKETIO_API_IP+':'+sioPort
+const sioClientAddr = env.SOCKETIO_PROTOCOL+'://'+env.SOCKETIO_APP_IP+':'+sioPort
 const zmqAddr = env.ZMQ_PROTOCOL+'://'+env.ZMQ_IP+':'+env.ZMQ_PORT
 
 const app = express();
@@ -17,7 +18,7 @@ const httpServer = http.createServer(app);
 const zmqSub = new Subscriber()
 zmqSub.subscribe()
 
-const io = new Server(httpServer, {cors: {origin: sioAddr, methods: 'GET'}}); //TODO this origin is not good
+const io = new Server(httpServer, {cors: {origin: sioClientAddr, methods: 'GET'}});
 
 async function initZmq() {
   try {
