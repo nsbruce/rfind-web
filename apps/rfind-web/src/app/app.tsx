@@ -10,7 +10,7 @@ function App() {
   const [latestIntegration, setLatestIntegration] = useState<Integration>({time: new Date(), bins:DEFAULT_FFT_VALUES});
 
   useEffect(() => {
-    const socket = io(env.SOCKETIO_PROTOCOL+'://'+env.SOCKETIO_IP+':'+env.SOCKETIO_PORT);
+    const socket = io(env.SOCKETIO_PROTOCOL+'://'+env.SOCKETIO_APP_IP+':'+env.SOCKETIO_PORT);
     socket.on("integration", (data: Message) => {
       const time = new Date(data.timestamp)
       setLatestIntegration({time: time, bins: data.bins.map(Number)});
