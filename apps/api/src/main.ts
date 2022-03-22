@@ -1,9 +1,16 @@
 import * as express from "express";
 import * as http from "http";
+import * as https from 'https';
 import { Server } from "socket.io";
 import {Subscriber} from 'zeromq'
 import {Message} from '@rfind-web/api-interfaces'
 import env from '@rfind-web/environment'
+import * as fs from 'fs'
+
+console.table(env)
+// console.log('process.env')
+// console.table(process.env)
+
 
 const sioPort = env.SOCKETIO_PORT;
 // const sioAddr = env.SOCKETIO_PROTOCOL+'://'+env.SOCKETIO_API_IP+':'+sioPort
@@ -11,14 +18,24 @@ const sioClientAddr = env.SOCKETIO_PROTOCOL+'://'+env.SOCKETIO_APP_IP+':'+sioPor
 const zmqAddr = env.ZMQ_PROTOCOL+'://'+env.ZMQ_IP+':'+env.ZMQ_PORT
 
 const app = express();
-
-const httpServer = http.createServer(app);
+let webServer: https.Server | http.Server;
+if (env.SOCKETIO_PROTOCOL === 'https') {
+  console.log('Setting up https server')
+  const credentials:https.ServerOptions = {
+    cert: fs.readFileSync(env.SSL_CERT),
+    key: fs.readFileSync(env.SSL_KEY)
+  }
+  webServer = https.createServer(credentials, app)
+} else {
+  console.log('Setting up http server')
+  webServer = http.createServer(app);
+}
 
 
 const zmqSub = new Subscriber()
 zmqSub.subscribe()
 
-const io = new Server(httpServer, {cors: {origin: sioClientAddr, methods: 'GET'}});
+const io = new Server(webServer, {cors: {origin: '*', methods: 'GET'}});
 
 async function initZmq() {
   try {
@@ -37,4 +54,4 @@ async function initZmq() {
 
 initZmq()
 
-httpServer.listen(sioPort, () => console.log(`Listening on port ${sioPort}`));
+webServer.listen(sioPort, () => console.log(`Listening on port ${sioPort}`));

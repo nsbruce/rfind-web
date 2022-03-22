@@ -16,8 +16,10 @@ export interface Environment {
   INTEGRATION_RATE: number;
   SPECTRA_LENGTH: number;
   SPECTRA_REBINNED_LENGTH: number;
-  DISPLAYED_TIME_LENGTH: number
-
+  DISPLAYED_TIME_LENGTH: number;
+  SSL_CERT: string;
+  SSL_KEY: string;
+  SSL_CA: string;
 }
 
 export const DEFAULT: Environment = {
@@ -38,4 +40,7 @@ export const DEFAULT: Environment = {
   SPECTRA_LENGTH: 600000,
   SPECTRA_REBINNED_LENGTH: 1024,
   DISPLAYED_TIME_LENGTH: 100,
+  SSL_CERT: '',
+  SSL_KEY: '',
+  SSL_CA: ''
 } as Environment;

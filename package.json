@@ -6,6 +6,7 @@
     "start:api": "nx serve api",
     "start:app": "nx serve rfind-web",
     "build": "nx build",
+    "build:all": "nx run-many --all --target=build",
     "test": "nx test",
     "test:all": "nx run-many --all --target=test",
     "format": "prettier --write */**/*.{ts,tsx}",
