@@ -1,20 +1,17 @@
-import * as express from "express";
 import * as http from "http";
 import * as https from 'https';
 import { Server } from "socket.io";
 import {Subscriber} from 'zeromq'
 import {Message} from '@rfind-web/api-interfaces'
-import 'dotenv/config'
 import env from '@rfind-web/environment'
+import 'dotenv/config'
 import * as fs from 'fs'
 
 
 const sioPort = env.SOCKETIO_PORT;
-// const sioAddr = env.SOCKETIO_PROTOCOL+'://'+env.SOCKETIO_API_IP+':'+sioPort
-const sioClientAddr = env.SOCKETIO_PROTOCOL+'://'+env.SOCKETIO_APP_IP+':'+sioPort
+// const sioClientAddr = env.SOCKETIO_PROTOCOL+'://'+env.SOCKETIO_APP_IP+':'+sioPort
 const zmqAddr = env.ZMQ_PROTOCOL+'://'+env.ZMQ_IP+':'+env.ZMQ_PORT
 
-const app = express();
 let webServer: https.Server | http.Server;
 if (env.SOCKETIO_PROTOCOL === 'https') {
   console.log('Setting up https server')
@@ -22,10 +19,10 @@ if (env.SOCKETIO_PROTOCOL === 'https') {
     cert: fs.readFileSync(env.SSL_CERT),
     key: fs.readFileSync(env.SSL_KEY)
   }
-  webServer = https.createServer(credentials, app)
+  webServer = https.createServer(credentials)
 } else {
   console.log('Setting up http server')
-  webServer = http.createServer(app);
+  webServer = http.createServer();
 }
 
 
