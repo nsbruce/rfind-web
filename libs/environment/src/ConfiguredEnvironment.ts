@@ -1,5 +1,4 @@
 import { Environment, DEFAULT } from './Environment';
-import 'dotenv/config'
 
 const environment: Environment = { ...DEFAULT };
 

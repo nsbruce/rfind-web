@@ -4,8 +4,11 @@ import * as https from 'https';
 import { Server } from "socket.io";
 import {Subscriber} from 'zeromq'
 import {Message} from '@rfind-web/api-interfaces'
+import 'dotenv/config'
 import env from '@rfind-web/environment'
 import * as fs from 'fs'
+
+console.table(env)
 
 const sioPort = env.SOCKETIO_PORT;
 // const sioAddr = env.SOCKETIO_PROTOCOL+'://'+env.SOCKETIO_API_IP+':'+sioPort
