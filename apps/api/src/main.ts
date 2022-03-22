@@ -7,11 +7,6 @@ import {Message} from '@rfind-web/api-interfaces'
 import env from '@rfind-web/environment'
 import * as fs from 'fs'
 
-console.table(env)
-// console.log('process.env')
-// console.table(process.env)
-
-
 const sioPort = env.SOCKETIO_PORT;
 // const sioAddr = env.SOCKETIO_PROTOCOL+'://'+env.SOCKETIO_API_IP+':'+sioPort
 const sioClientAddr = env.SOCKETIO_PROTOCOL+'://'+env.SOCKETIO_APP_IP+':'+sioPort
