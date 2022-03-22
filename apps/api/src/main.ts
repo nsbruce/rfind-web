@@ -8,7 +8,6 @@ import 'dotenv/config'
 import env from '@rfind-web/environment'
 import * as fs from 'fs'
 
-console.table(env)
 
 const sioPort = env.SOCKETIO_PORT;
 // const sioAddr = env.SOCKETIO_PROTOCOL+'://'+env.SOCKETIO_API_IP+':'+sioPort
@@ -39,10 +38,12 @@ async function initZmq() {
   try {
     await zmqSub.bind(zmqAddr)
     for await (const [topic, msg] of zmqSub) {
+      console.log('Received message with topic', topic)
       const spectra = new Float32Array(msg.buffer)
       const timestamp = parseFloat(topic.toString())*1000 //python is ms JS is s
       
       io.emit('integration', {timestamp:timestamp, bins: [...spectra]} as Message)
+      console.log('Emitted integration to sio')
       
     }
   } catch (err) {

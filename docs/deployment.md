@@ -37,11 +37,17 @@ nvm use 14.18.0
 
 ## Build project
 
-To use Github you'll probably need to add the VMs publish ssh key to your github account. Then clone repo and from inside its directory install the necessary packages and build deployable bundles with
+To use Github you'll probably need to add the VMs publish ssh key to your github account. Then clone repo and from inside its directory install the necessary packages and generate an environment file
 
 ```bash
 yarn
-yarn build rfind-web
+yarn make:envfile
+```
+
+Edit the generated .env file with relevant values. Now build a deployable bundle.
+
+```bash
+yarn build rfind-web --prod
 ```
 
 ## Install web server to host React app
@@ -158,6 +164,33 @@ sudo systemctl status certbot.timer
 sudo certbot renew --dry-run
 ```
 
+The certificate files are stored in `/etc/letsencrypt/live/<SERVER-PUBLIC-IP>` so fill in the appropriate lines in your ~/rfind-web/.env file
+
+```bash
+NX_SSL_CERT=/etc/letsencrypt/live/<SERVER-PUBLIC-IP>/fullchain.pem
+NX_SSL_KEY=/etc/letsencrypt/live/<SERVER-PUBLIC-IP>/privkey.pem
+NX_SSL_CA=/etc/letsencrypt/live/<SERVER-PUBLIC-IP>/chain.pem
+```
+
+Because the certificate was generated using sudo, we need to create a limited unix group which gives the regular user (who will be running the node server) access.
+
+```bash
+sudo addgroup sslcert
+sudo adduser <USERNAME-ON-SERVER> sslcert
+sudo adduser root sslcert
+sudo chgrp -R sslcert /etc/letsencrypt/live
+sudo chgrp -R sslcert /etc/letsencrypt/archive
+sudo chmod -R 750 /etc/letsencrypt/live
+sudo chmod -R 750 /etc/letsencrypt/archive
+```
+
+Reboot.
+
+```bash
+sudo reboot
+```
+
+
 ## Deploy node js server
 
 ### Setup system service to run the node server
@@ -170,13 +203,12 @@ Install PM2 (process manager for node applications), , and tell it to launch man
 npm install pm2 -g
 ```
 
-Build your node application and tell PM2 to start and parent it
+Build your node application and tell PM2 to start and parent it (ensure you run the `pm2 start` command from the folder containing your `.env`)
 
 ```bash
 cd ~/rfind-web
-yarn build api
-cd dist/apps/api
-pm2 start main.js
+yarn build api --prod
+pm2 start dist/apps/api/main.js
 pm2 startup systemd
 ```
 
