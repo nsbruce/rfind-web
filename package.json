@@ -12,8 +12,8 @@
     "format": "prettier --write */**/*.{ts,tsx}",
     "make:envfile": "ts-node libs/environment/src/generate",
     "redeploy:app": "dotenv -- cross-var cp -r dist/apps/rfind-web/* /var/www/%NX_SOCKETIO_IP%/html/",
-    "redeploy:api": "pm2 restart API",
-    "redeploy:all": "redeploy:app && redeploy:api"
+    "redeploy:api": "pm2 restart API --update-env",
+    "redeploy:all": "yarn redeploy:app && yarn redeploy:api"
   },
   "private": true,
   "dependencies": {
