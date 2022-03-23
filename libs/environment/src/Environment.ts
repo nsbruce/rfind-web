@@ -1,14 +1,12 @@
 
 export interface Environment {
-  ZMQ_PORT: number;
-  ZMQ_PROTOCOL: string;
-  ZMQ_IP: string;
-  PRODUCTION: boolean;
   SCICHART_RUNTIME_KEY:string;
   SOCKETIO_PORT: number;
   SOCKETIO_PROTOCOL: string;
   SOCKETIO_APP_IP: string;
   SOCKETIO_API_IP: string;
+  SOCKETIO_FRONTEND_NAMESPACE: string;
+  SOCKETIO_BACKEND_NAMESPACE: string;
   START_FREQ: number;
   BANDWIDTH: number;
   SPECTRA_MAX_VALUE: number;
@@ -23,15 +21,13 @@ export interface Environment {
 }
 
 export const DEFAULT: Environment = {
-  ZMQ_PORT: 5557,
-  ZMQ_PROTOCOL: 'tcp',
-  ZMQ_IP: '127.0.0.1',
-  PRODUCTION: false,
   SCICHART_RUNTIME_KEY: '',
   SOCKETIO_PORT: 4001,
   SOCKETIO_PROTOCOL: 'http',
   SOCKETIO_APP_IP: 'localhost',
   SOCKETIO_API_IP: 'localhost',
+  SOCKETIO_FRONTEND_NAMESPACE: '/frontend',
+  SOCKETIO_BACKEND_NAMESPACE: '/backend',
   START_FREQ: 0,
   BANDWIDTH: 2e9,
   SPECTRA_MAX_VALUE: 18,
@@ -42,5 +38,5 @@ export const DEFAULT: Environment = {
   DISPLAYED_TIME_LENGTH: 100,
   SSL_CERT: '',
   SSL_KEY: '',
-  SSL_CA: ''
+  SSL_CA: '',
 } as Environment;

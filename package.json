@@ -22,8 +22,7 @@
     "scichart": "^2.1.2290",
     "socket.io": "^4.4.1",
     "socket.io-client": "^4.4.1",
-    "tslib": "^2.0.0",
-    "zeromq": "6.0.0-beta.6"
+    "tslib": "^2.0.0"
   },
   "devDependencies": {
     "@nrwl/cli": "13.2.2",
