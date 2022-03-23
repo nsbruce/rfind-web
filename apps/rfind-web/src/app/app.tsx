@@ -24,9 +24,6 @@ function App() {
 
   return (
     <div style={{display:'flex', flexDirection:'column', height:'100vh', width: '100vw'}}>
-    {/* <p>
-      At <time dateTime={latestIntegration?.time.toString()}>{latestIntegration?.time.toString()}</time> there were {latestIntegration?.bins.length} bins.
-    </p> */}
     <FFTChart latestIntegration={latestIntegration} />
     </div>
   );
