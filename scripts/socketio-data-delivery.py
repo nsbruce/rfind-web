@@ -34,7 +34,7 @@ def connect_error(data):
 def disconnect():
     print("I am disconnected from the server")
 
-sioAddr = env['NX_SOCKETIO_PROTOCOL']+'://'+env['NX_SOCKETIO_IP']+':'+env['NX_SOCKETIO_PORT']
+sioAddr = env['NX_SOCKETIO_PROTOCOL']+'://'+env['NX_SOCKETIO_APP_IP']+':'+env['NX_SOCKETIO_PORT']
 
 sio.connect(sioAddr, namespaces=[env['NX_SOCKETIO_BACKEND_NAMESPACE']])
 
@@ -44,6 +44,8 @@ with h5py.File(env['H5_DATA_FILE'],'r') as h5f:
     while True:
         print(f"Trying to send iteration {i}")
         spec = 10.*np.log10(h5f['spec'][i % modlen]).astype('float32')
+        if int(env['NX_SPECTRA_LENGTH']) < spec.shape[0]:
+            spec = spec[:int(env['NX_SPECTRA_LENGTH'])]
         ts = datetime.datetime.now().timestamp()*1000
 
         # print('Size',sys.getsizeof(spec.tobytes())/1024, 'kB')
