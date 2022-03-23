@@ -3,9 +3,7 @@ import * as https from 'https';
 import { Server, Socket, ServerOptions } from "socket.io";
 import {Integration} from '@rfind-web/api-interfaces'
 import env from '@rfind-web/environment'
-import 'dotenv/config'
 import * as fs from 'fs'
-
 
 
 const sioPort = env.SOCKETIO_PORT;

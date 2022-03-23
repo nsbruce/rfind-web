@@ -208,7 +208,7 @@ Build your node application and tell PM2 to start and parent it (ensure you run 
 ```bash
 cd ~/rfind-web
 yarn build api --prod
-pm2 start dist/apps/api/main.js
+pm2 start pm2.config.js
 pm2 startup systemd
 ```
 
@@ -233,42 +233,9 @@ Check the service status
 systemctl status pm2-<USERNAME-ON-SERVER>
 ```
 
-### Setup Nginx reverse proxy server to expose it for some reason
-
-<!-- Edit the Nginx configuration from earlier
-
-```bash 
-sudo vi /etc/nginx/sites-available/<SERVER-PUBLIC-IP>
-```
-
-Add a `location /` block for each port that needs access to that node application. For my current socketio server that looks like:
-
-```bash
-   location / {
-          proxy_pass http://localhost:4001;
-          proxy_http_version 1.1;
-          proxy_set_header Upgrade $http_upgrade;
-          proxy_set_header Connection 'upgrade';
-          proxy_set_header Host $host;
-          proxy_cache_bypass $http_upgrade;
-   }
-```
-
-and for my ZMQ subscriber it looks like
-```bash
-   location / {
-          proxy_pass tcp://localhost:5557;
-          proxy_http_version 1.1;
-          proxy_set_header Upgrade $http_upgrade;
-          proxy_set_header Connection 'upgrade';
-          proxy_set_header Host $host;
-          proxy_cache_bypass $http_upgrade;
-   }
-``` -->
-
 ## Allow api ports in firewall
 
+Figure out your socketio port (t defaults in the .env to 4001) and then enable it.
 ```bash
-sudo ufw allow 5557
-sudo ufw allow 4001
+sudo ufw allow <YOUR SOCKETIO PORT>
 ```

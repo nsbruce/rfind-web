@@ -1,10 +1,10 @@
 
 export interface Environment {
+  PRODUCTION: boolean;
   SCICHART_RUNTIME_KEY:string;
   SOCKETIO_PORT: number;
   SOCKETIO_PROTOCOL: string;
-  SOCKETIO_APP_IP: string;
-  SOCKETIO_API_IP: string;
+  SOCKETIO_IP: string;
   SOCKETIO_FRONTEND_NAMESPACE: string;
   SOCKETIO_BACKEND_NAMESPACE: string;
   START_FREQ: number;
@@ -21,11 +21,11 @@ export interface Environment {
 }
 
 export const DEFAULT: Environment = {
+  PRODUCTION: false,
   SCICHART_RUNTIME_KEY: '',
   SOCKETIO_PORT: 4001,
   SOCKETIO_PROTOCOL: 'http',
-  SOCKETIO_APP_IP: 'localhost',
-  SOCKETIO_API_IP: 'localhost',
+  SOCKETIO_IP: 'localhost',
   SOCKETIO_FRONTEND_NAMESPACE: '/frontend',
   SOCKETIO_BACKEND_NAMESPACE: '/backend',
   START_FREQ: 0,

@@ -10,7 +10,10 @@
     "test": "nx test",
     "test:all": "nx run-many --all --target=test",
     "format": "prettier --write */**/*.{ts,tsx}",
-    "make:envfile": "ts-node libs/environment/src/generate"
+    "make:envfile": "ts-node libs/environment/src/generate",
+    "redeploy:app": "dotenv -- cross-var cp -r dist/apps/rfind-web/* /var/www/%NX_SOCKETIO_IP%/html/",
+    "redeploy:api": "pm2 restart API",
+    "redeploy:all": "redeploy:app && redeploy:api"
   },
   "private": true,
   "dependencies": {
@@ -46,7 +49,9 @@
     "@typescript-eslint/eslint-plugin": "~4.33.0",
     "@typescript-eslint/parser": "~4.33.0",
     "babel-jest": "27.2.3",
+    "cross-var": "^1.1.0",
     "cypress": "^8.3.0",
+    "dotenv-cli": "^5.0.0",
     "eslint": "7.32.0",
     "eslint-config-prettier": "8.1.0",
     "eslint-plugin-cypress": "^2.10.3",

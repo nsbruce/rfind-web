@@ -34,7 +34,7 @@ def connect_error(data):
 def disconnect():
     print("I am disconnected from the server")
 
-sioAddr = env['NX_SOCKETIO_PROTOCOL']+'://'+env['NX_SOCKETIO_APP_IP']+':'+env['NX_SOCKETIO_PORT']
+sioAddr = env['NX_SOCKETIO_PROTOCOL']+'://'+env['NX_SOCKETIO_IP']+':'+env['NX_SOCKETIO_PORT']
 
 sio.connect(sioAddr, namespaces=[env['NX_SOCKETIO_BACKEND_NAMESPACE']])
 
