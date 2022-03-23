@@ -162,7 +162,7 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
     return (
         <>
             <div id={divElementIdFftChart} style={{height:'30vh', width: '100vw'}} />
-            <div id={divElementIdSpectrogramChart} style={{height:'60vh', width:'100vw'}} />
+            <div id={divElementIdSpectrogramChart} style={{height:'70vh', width:'100vw'}} />
         </>
     );
 }

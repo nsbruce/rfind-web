@@ -15,3 +15,7 @@ Run `yarn start app` in one console to start the React front end and `yarn start
 ## Deploying
 
 For a walkthrough on deploying to an Ubuntu server see [the docs on deployment](./docs/deployment.md)
+
+## Redeploying
+
+If you make changes after the app is first deployed you can simply rebuild with `yarn build:all --prod` and then redeploy with `yarn redeploy:all`.
