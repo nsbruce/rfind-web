@@ -13,8 +13,8 @@ export const REBINNED_SPECTRA_LENGTH = Number(env.SPECTRA_REBINNED_LENGTH);
 
 //Arrays
 const full_freqs = new Array<number>(FULL_SPECTRA_LENGTH);
-for (let i = Number(env.START_FREQ); i < FULL_SPECTRA_LENGTH; i++) {
-    full_freqs[i] = i * FULL_SPECTRA_HZ_PER_BIN;
+for (let i = 0; i < FULL_SPECTRA_LENGTH; i++) {
+    full_freqs[i] = i * FULL_SPECTRA_HZ_PER_BIN + Number(env.START_FREQ);
 }
 export const FULL_FREQS = full_freqs;
 export const DEFAULT_FFT_VALUES = new Array(FULL_SPECTRA_LENGTH).fill(0)
