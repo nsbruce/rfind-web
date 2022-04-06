@@ -5,7 +5,7 @@ import { SciChartSurface } from 'scichart';
 import App from './app/app';
 
 if (env.PRODUCTION) {
-  SciChartSurface.setRuntimeLicenseKey(env.SCICHART_RUNTIME_KEY)
+  SciChartSurface.setRuntimeLicenseKey(env.SCICHART_RUNTIME_KEY);
 }
 
 ReactDOM.render(
