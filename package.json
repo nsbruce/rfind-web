@@ -13,7 +13,8 @@
     "make:envfile": "ts-node libs/environment/src/generate",
     "redeploy:app": "dotenv -- cross-var cp -r dist/apps/rfind-web/* /var/www/%NX_SOCKETIO_IP%/html/",
     "redeploy:api": "pm2 restart API --update-env",
-    "redeploy:all": "yarn redeploy:app && yarn redeploy:api"
+    "redeploy:all": "yarn redeploy:app && yarn redeploy:api",
+    "rebuild:app": "yarn build rfind-web --prod --ignore-cache"
   },
   "private": true,
   "dependencies": {
