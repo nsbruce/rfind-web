@@ -1,18 +1,50 @@
-# Getting a VM setup to run this thing
+# Deployment
 
-## Choose OS
+This document covers deploying the app/api as well as the data provider. A reminder that the flow of data is for a data provider to push integrated spectra from some probably radio-interfaced computer as a socket-io client to a VM hosted node server. That node server manages a socket-io server.
+
+The VM also hosts the website, so serves a React app, each of which is a socket-io client to the users browser.
+
+When the node-managed socket-io server receives an integration from the data provider (socket-io client), it processes it to be more digestible by the React app then pushes it to each instance of the React app (all in-browser socket-io clients).
+
+## Table of Contents
+
+- [Deployment](#deployment)
+  - [Table of Contents](#table-of-contents)
+  - [Deploying VM](#deploying-vm)
+    - [Choose OS](#choose-os)
+    - [First steps](#first-steps)
+    - [Deploying React app](#deploying-react-app)
+      - [Install dependencies](#install-dependencies)
+      - [Build project](#build-project)
+      - [Install web server to host React app](#install-web-server-to-host-react-app)
+      - [Setup an ssl cert (https)](#setup-an-ssl-cert-https)
+    - [Deploy node js server](#deploy-node-js-server)
+      - [Setup system service to run the node server](#setup-system-service-to-run-the-node-server)
+    - [Finishing steps](#finishing-steps)
+      - [Allow api ports in firewall](#allow-api-ports-in-firewall)
+  - [Deploy data provider](#deploy-data-provider)
+    - [Ettus USRP](#ettus-usrp)
+      - [Docker](#docker)
+      - [Native](#native)
+
+
+## Deploying VM
+
+### Choose OS
 
 I'm using Ubuntu 20.04. General tips if using Compute Canada Cloud:
 
 1. Don't use your maximum available storage when spinning up an instance, it will mean you can't snapshot or back it up later.
 
-## First steps
+### First steps
 
 1. Open ssh, http, https ports
 2. Assign floating IP
 3. ssh in and update os
 
-## Install yarn, nvm and node
+### Deploying React app
+
+#### Install dependencies
 
 Install yarn
 
@@ -35,7 +67,7 @@ nvm install 14.18.0
 nvm use 14.18.0
 ```
 
-## Build project
+#### Build project
 
 To use Github you'll probably need to add the VMs publish ssh key to your github account. Then clone repo and from inside its directory install the necessary packages and generate an environment file
 
@@ -50,7 +82,7 @@ Edit the generated .env file with relevant values. Now build a deployable bundle
 yarn build rfind-web --prod
 ```
 
-## Install web server to host React app
+#### Install web server to host React app
 
 This is heavily based off of a [Digital Ocean tutorial](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-20-04).
 
@@ -134,7 +166,7 @@ sudo nginx -t
 sudo systemctl restart nginx
 ```
 
-## Setup an ssl cert (https)
+#### Setup an ssl cert (https)
 
 This is also heavily based off of a [Digital Ocean tutorial](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04).
 
@@ -191,9 +223,9 @@ sudo reboot
 ```
 
 
-## Deploy node js server
+### Deploy node js server
 
-### Setup system service to run the node server
+#### Setup system service to run the node server
 
 This too is heavily based off of a [Digital Ocean tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-20-04).
 
@@ -233,9 +265,25 @@ Check the service status
 systemctl status pm2-<USERNAME-ON-SERVER>
 ```
 
-## Allow api ports in firewall
+### Finishing steps
+#### Allow api ports in firewall
 
-Figure out your socketio port (t defaults in the .env to 4001) and then enable it.
+Figure out your socketio port (it defaults in the .env to 4001) and then enable it.
 ```bash
 sudo ufw allow <YOUR SOCKETIO PORT>
 ```
+
+
+## Deploy data provider
+
+### Ettus USRP
+
+So far I have set this up to stream data from the USRP using the UHD Python API into socket-io messages which are then emitted to the node-managed socket-io server.
+
+#### Docker
+
+I've written a handy [Docker](../DataProviders/USRP/Dockerfile) container which deploys everything. It essentially installs the build requirements, grabs the socket-io client script and starts running it.
+
+#### Native
+
+If you don't want to use Docker you'll have to figure out a way to keep the [data provider script](../DataProviders/USRP/socketio-data-delivery-usrp.py) running. There are several methods but it's probably easiest to [lean on systemd](https://code.luasoftware.com/tutorials/linux/auto-start-python-script-on-boot-systemd/).
