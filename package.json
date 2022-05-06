@@ -4,17 +4,18 @@
   "license": "MIT",
   "scripts": {
     "start:api": "nx serve api",
-    "start:app": "nx serve rfind-web",
+    "start:web": "nx serve web",
     "build": "nx build",
     "build:all": "nx run-many --all --target=build",
+    "build:api": "yarn build api --prod --ignore-cache",
+    "build:web": "yarn build web --prod --ignore-cache",
     "test": "nx test",
     "test:all": "nx run-many --all --target=test",
     "format": "prettier --write */**/*.{ts,tsx}",
     "make:envfile": "ts-node libs/environment/src/generate",
-    "redeploy:app": "dotenv -- cross-var cp -r dist/apps/rfind-web/* /var/www/%NX_SOCKETIO_IP%/html/",
-    "redeploy:api": "pm2 restart API --update-env",
-    "redeploy:all": "yarn redeploy:app && yarn redeploy:api",
-    "rebuild:app": "yarn build rfind-web --prod --ignore-cache"
+    "deploy:all": "yarn deploy:web && yarn deploy:api",
+    "deploy:api": "pm2 restart API --update-env",
+    "deploy:web": "dotenv -- cross-var cp -r dist/apps/web/* /var/www/%NX_SOCKETIO_IP%/html/"
   },
   "private": true,
   "dependencies": {
