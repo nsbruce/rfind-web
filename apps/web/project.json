@@ -38,14 +38,14 @@
     "serve": {
       "executor": "@nrwl/web:dev-server",
       "options": {
-        "buildTarget": "rfind-web:build",
+        "buildTarget": "web:build",
         "hmr": true,
         "proxyConfig": "apps/web/proxy.conf.json",
         "webpackConfig": "apps/web/webpack.config.js"
       },
       "configurations": {
         "production": {
-          "buildTarget": "rfind-web:build:production",
+          "buildTarget": "web:build:production",
           "hmr": false
         }
       }
