@@ -13,11 +13,10 @@ import numpy as np
 import h5py
 import datetime
 import time
-import sys
 from dotenv import dotenv_values
 
 env = {
-    **dotenv_values("../.env"),
+    **dotenv_values("../../.env"),
     **dotenv_values(".env")
 }
 sio = socketio.Client(ssl_verify=False)#, logger=True, engineio_logger=True)
@@ -34,7 +33,7 @@ def connect_error(data):
 def disconnect():
     print("I am disconnected from the server")
 
-sioAddr = env['NX_SOCKETIO_PROTOCOL']+'://'+env['NX_SOCKETIO_APP_IP']+':'+env['NX_SOCKETIO_PORT']
+sioAddr = env['NX_SOCKETIO_PROTOCOL']+'://'+env['NX_SOCKETIO_IP']+':'+env['NX_SOCKETIO_PORT']
 
 sio.connect(sioAddr, namespaces=[env['NX_SOCKETIO_BACKEND_NAMESPACE']])
 
