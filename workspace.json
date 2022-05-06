@@ -5,8 +5,8 @@
     "api-interfaces": "libs/api-interfaces",
     "const": "libs/const",
     "environment": "libs/environment",
-    "rfind-web": "apps/rfind-web",
-    "rfind-web-e2e": "apps/rfind-web-e2e",
-    "utils": "libs/utils"
+    "utils": "libs/utils",
+    "web": "apps/web",
+    "web-e2e": "apps/web-e2e"
   }
 }

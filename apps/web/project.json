@@ -1,6 +1,6 @@
 {
-  "root": "apps/rfind-web",
-  "sourceRoot": "apps/rfind-web/src",
+  "root": "apps/web",
+  "sourceRoot": "apps/web/src",
   "projectType": "application",
   "targets": {
     "build": {
@@ -8,24 +8,22 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/rfind-web",
-        "index": "apps/rfind-web/src/index.html",
+        "outputPath": "dist/apps/web",
+        "index": "apps/web/src/index.html",
         "baseHref": "/",
-        "main": "apps/rfind-web/src/main.tsx",
-        "polyfills": "apps/rfind-web/src/polyfills.ts",
-        "tsConfig": "apps/rfind-web/tsconfig.app.json",
-        "assets": [
-          "apps/rfind-web/src/favicon.ico"
-        ],
+        "main": "apps/web/src/main.tsx",
+        "polyfills": "apps/web/src/polyfills.ts",
+        "tsConfig": "apps/web/tsconfig.app.json",
+        "assets": ["apps/web/src/favicon.ico"],
         "scripts": [],
-        "webpackConfig": "apps/rfind-web/webpack.config.js"
+        "webpackConfig": "apps/web/webpack.config.js"
       },
       "configurations": {
         "production": {
           "fileReplacements": [
             {
-              "replace": "apps/rfind-web/src/environments/environment.ts",
-              "with": "apps/rfind-web/src/environments/environment.prod.ts"
+              "replace": "apps/web/src/environments/environment.ts",
+              "with": "apps/web/src/environments/environment.prod.ts"
             }
           ],
           "optimization": true,
@@ -40,14 +38,14 @@
     "serve": {
       "executor": "@nrwl/web:dev-server",
       "options": {
-        "buildTarget": "rfind-web:build",
+        "buildTarget": "web:build",
         "hmr": true,
-        "proxyConfig": "apps/rfind-web/proxy.conf.json",
-        "webpackConfig": "apps/rfind-web/webpack.config.js"
+        "proxyConfig": "apps/web/proxy.conf.json",
+        "webpackConfig": "apps/web/webpack.config.js"
       },
       "configurations": {
         "production": {
-          "buildTarget": "rfind-web:build:production",
+          "buildTarget": "web:build:production",
           "hmr": false
         }
       }
@@ -56,14 +54,14 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/rfind-web/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["apps/web/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/rfind-web"],
+      "outputs": ["coverage/apps/web"],
       "options": {
-        "jestConfig": "apps/rfind-web/jest.config.js",
+        "jestConfig": "apps/web/jest.config.js",
         "passWithNoTests": true
       }
     }

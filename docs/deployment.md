@@ -27,7 +27,6 @@ When the node-managed socket-io server receives an integration from the data pro
       - [Docker](#docker)
       - [Native](#native)
 
-
 ## Deploying VM
 
 ### Choose OS
@@ -79,7 +78,7 @@ yarn make:envfile
 Edit the generated .env file with relevant values. Now build a deployable bundle.
 
 ```bash
-yarn build rfind-web --prod
+yarn build:web
 ```
 
 #### Install web server to host React app
@@ -120,7 +119,7 @@ Put the react app files where they need to be
 sudo mkdir -p /var/www/<SERVER-PUBLIC-IP>/html
 sudo chown -R $USER:$USER /var/www/<SERVER-PUBLIC-IP>/html
 sudo chmod -R 755 /var/www/<SERVER-PUBLIC-IP>
-cp -r ~/rfind-web/dist/apps/rfind-web/* /var/www/<SERVER-PUBLIC-IP>/html/
+cp -r ~/rfind-web/dist/apps/web/* /var/www/<SERVER-PUBLIC-IP>/html/
 ```
 
 Edit or create the following file
@@ -196,7 +195,7 @@ sudo systemctl status certbot.timer
 sudo certbot renew --dry-run
 ```
 
-The certificate files are stored in `/etc/letsencrypt/live/<SERVER-PUBLIC-IP>` so fill in the appropriate lines in your ~/rfind-web/.env file
+The certificate files are stored in `/etc/letsencrypt/live/<SERVER-PUBLIC-IP>` so fill in the appropriate lines in your `.env` file
 
 ```bash
 NX_SSL_CERT=/etc/letsencrypt/live/<SERVER-PUBLIC-IP>/fullchain.pem
@@ -222,7 +221,6 @@ Reboot.
 sudo reboot
 ```
 
-
 ### Deploy node js server
 
 #### Setup system service to run the node server
@@ -239,7 +237,7 @@ Build your node application and tell PM2 to start and parent it (ensure you run 
 
 ```bash
 cd ~/rfind-web
-yarn build api --prod
+yarn build:api
 pm2 start pm2.config.js
 pm2 startup systemd
 ```
@@ -266,13 +264,14 @@ systemctl status pm2-<USERNAME-ON-SERVER>
 ```
 
 ### Finishing steps
+
 #### Allow api ports in firewall
 
 Figure out your socketio port (it defaults in the .env to 4001) and then enable it.
+
 ```bash
 sudo ufw allow <YOUR SOCKETIO PORT>
 ```
-
 
 ## Deploy data provider
 

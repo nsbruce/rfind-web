@@ -10,7 +10,7 @@ Run `yarn` to install necessary node_modules.
 
 Run `yarn make:envfile` to build the necessary .env files.
 
-Run `yarn start:app` in one console to start the React front end and `yarn start:api` in another to start the nodejs back end.
+Run `yarn start:web` in one console to start the React front end and `yarn start:api` in another to start the nodejs back end.
 
 ## Deploying
 
