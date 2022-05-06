@@ -7,11 +7,11 @@
       "executor": "@nrwl/cypress:cypress",
       "options": {
         "cypressConfig": "apps/web-e2e/cypress.json",
-        "devServerTarget": "rfind-web:serve"
+        "devServerTarget": "web:serve"
       },
       "configurations": {
         "production": {
-          "devServerTarget": "rfind-web:serve:production"
+          "devServerTarget": "web:serve:production"
         }
       }
     },
