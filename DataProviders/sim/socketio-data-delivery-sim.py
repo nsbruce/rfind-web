@@ -42,7 +42,10 @@ with h5py.File(env['H5_DATA_FILE'],'r') as h5f:
     i=0
     while True:
         print(f"Trying to send iteration {i}")
-        spec = 10.*np.log10(h5f['spec'][i % modlen]).astype('float32')
+        spec = np.array(1000.*np.log10(h5f['spec'][i % modlen])).astype(dtype=np.int16)
+        print('Max', np.max(spec), 'Min', np.min(spec))
+        print("Data shape is", spec.shape)
+        print("Memory size is", spec.nbytes/1000/1000, "MB")
         if int(env['NX_SPECTRA_LENGTH']) < spec.shape[0]:
             spec = spec[:int(env['NX_SPECTRA_LENGTH'])]
         ts = datetime.datetime.now().timestamp()*1000
