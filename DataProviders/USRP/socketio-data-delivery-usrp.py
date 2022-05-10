@@ -118,8 +118,9 @@ try:
                 samples[:,recv_samps:recv_samps+real_samps] = recv_buffer[:,0:real_samps]
                 recv_samps += real_samps
         # Compute PSD
-        bins = psd(samples).astype('float32')
-        # print('BINS', bins.shape)
+        bins = np.multiply(1000,psd(samples)).astype(np.int16)
+        print('Max', np.max(bins), 'Min', np.min(bins))
+        print("Data shape is", bins.shape)
         # Get timestamp (to be removed)
         ts = datetime.datetime.now().timestamp()*1000
         # Output max and min value of bins
