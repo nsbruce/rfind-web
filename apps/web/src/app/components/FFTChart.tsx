@@ -100,7 +100,7 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
 
     const yAxis = new NumericAxis(wasmContext, {
       visibleRange: new NumberRange(SPECTRA_MIN_VALUE, SPECTRA_MAX_VALUE),
-      axisTitle: 'Amp. (dB)',
+      axisTitle: 'Pwr. (dBm/Hz)',
       ...sharedYAxisProps,
     });
     sciChartSurface.yAxes.add(yAxis);
