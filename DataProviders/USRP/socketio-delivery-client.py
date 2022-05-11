@@ -4,6 +4,7 @@
 # python-socketio==5.5.2
 # python-dotenv==0.20.0
 # numpy==1.22.2
+# websocket-client==1.2.1
 #
 # uhd with python api installed from source at v4.1.0.5
 #
@@ -12,13 +13,12 @@ import socketio
 import numpy as np
 import datetime
 import time
-import sys
 from dotenv import dotenv_values
 import uhd
-from scipy import signal
 import time
 
 env = {
+    **dotenv_values("../../.env"),
     **dotenv_values(".env")
 }
 

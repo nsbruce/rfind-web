@@ -19,7 +19,7 @@ env = {
     **dotenv_values("../../.env"),
     **dotenv_values(".env")
 }
-sio = socketio.Client(ssl_verify=False)#, logger=True, engineio_logger=True)
+sio = socketio.Client(ssl_verify=True)#, logger=True, engineio_logger=True)
 
 @sio.event
 def connect():
@@ -40,17 +40,31 @@ sio.connect(sioAddr, namespaces=[env['NX_SOCKETIO_BACKEND_NAMESPACE']])
 with h5py.File(env['H5_DATA_FILE'],'r') as h5f:
     modlen = len(h5f['times'])
     i=0
+
+    outMin = int(env['NX_SPECTRA_MIN_VALUE'])
+    outMax = int(env['NX_SPECTRA_MAX_VALUE'])
+    outDiff = outMax - outMin
     while True:
         print(f"Trying to send iteration {i}")
-        spec = np.array(1000.*np.log10(h5f['spec'][i % modlen])).astype(dtype=np.int16)
-        print('Max', np.max(spec), 'Min', np.min(spec))
-        print("Data shape is", spec.shape)
-        print("Memory size is", spec.nbytes/1000/1000, "MB")
+        spec = 10.*np.log10(h5f['spec'][i % modlen])
+        spec *= 2
+        spec += outMin
+        # Make the bottom zero
+        # spec -= spec.min()
+        # spec *= outDiff/spec.max()
+        # spec += outMin
+        # spec *= 100
+        spec = np.array(spec*100).astype(dtype=np.int16)
+
+
         if int(env['NX_SPECTRA_LENGTH']) < spec.shape[0]:
             spec = spec[:int(env['NX_SPECTRA_LENGTH'])]
         ts = datetime.datetime.now().timestamp()*1000
 
-        # print('Size',sys.getsizeof(spec.tobytes())/1024, 'kB')
+        print('Max', np.max(spec), 'Min', np.min(spec))
+        print("Data shape is", spec.shape)
+        print("Memory size is", spec.nbytes/1000/1000, "MB")
+
         try: 
             print("-- Succeeded")
             sio.emit(event='integration', data={'bins': spec.tobytes(), 'timestamp':ts}, namespace=env['NX_SOCKETIO_BACKEND_NAMESPACE'])
