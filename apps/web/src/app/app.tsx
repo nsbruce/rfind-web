@@ -21,7 +21,7 @@ function App() {
         '/frontend'
     );
     socket.on('client', (data: Integration) => {
-      setLatestIntegration({ time: data.time, bins: data.bins.map(Number) });
+      setLatestIntegration({ time: data.time, bins: data.bins.map((n)=>Number(n/100)) });
     });
 
     // CLEAN UP THE EFFECT

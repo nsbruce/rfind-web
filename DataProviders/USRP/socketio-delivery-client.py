@@ -4,6 +4,7 @@
 # python-socketio==5.5.2
 # python-dotenv==0.20.0
 # numpy==1.22.2
+# websocket-client==1.2.1
 #
 # uhd with python api installed from source at v4.1.0.5
 #
@@ -12,14 +13,13 @@ import socketio
 import numpy as np
 import datetime
 import time
-import sys
 from dotenv import dotenv_values
 import uhd
-from scipy import signal
 import time
 
 env = {
-    **dotenv_values(".env")
+    **dotenv_values(".env"),
+    **dotenv_values("../../.env")
 }
 
 # extract relevant env variables
@@ -57,7 +57,6 @@ usrp.set_rx_freq(fc, 0)
 usrp.set_rx_gain(15,0)
 
 # Set up stream and rx buffer
-# num_samps = int(fs*integration_rate)
 num_samps = nfft
 samples = np.empty((1,num_samps), dtype=np.complex64)
 
@@ -75,34 +74,14 @@ stream_cmd.stream_now = True
 streamer.issue_stream_cmd(stream_cmd)
 
 # Setup PSD
-# window = np.hamming(nfft)
-# def psd(samples):
-#     """ Return PSD of `samples` """
-#     result = np.reshape(samples, (-1,nfft))
-#     result = np.multiply(result, window)
-#     result = np.fft.fftshift(np.fft.fft(result,axis=0))
-#     result = 20.*np.log10(np.abs(result))
-#     return result
-
 def psd(samples):
     window = np.hamming(len(samples))
     result = np.multiply(window, samples)
     result = np.fft.fftshift(np.fft.fft(result, nfft))
-    result = np.abs(np.nan_to_num(10.0 * np.log10(np.square(np.abs(result)))))
+    # Multiply by extra 100 so we can int it later
+    result = np.abs(np.nan_to_num(1000.0 * np.log10(np.square(np.abs(result)))))
     result = np.abs(result)
     return result
-
-# def psd(samples):
-#     return signal.periodogram(samples, nfft=nfft, fs=fs, window='hamming', scaling='spectrum', return_onesided=False)[1]
-
-# def psd(samples):
-#     print('SAMPLES',samples.shape)
-#     # samples = samples[:nfft*3051]
-#     # result = signal.spectrogram(samples, fs=fs, nperseg=nfft, noverlap=0, nfft=nfft, return_onesided=False)[2]
-#     result = signal.stft(samples, fs=fs, nperseg=nfft, noverlap=0, nfft=nfft, return_onesided=False)[2]
-#     print('RESULT',result.shape)
-#     # print(np.sum(result, axis=1))
-#     return np.sum(result, axis=2)
 
 # Receive samples and transmit
 try:
@@ -118,13 +97,15 @@ try:
                 samples[:,recv_samps:recv_samps+real_samps] = recv_buffer[:,0:real_samps]
                 recv_samps += real_samps
         # Compute PSD
-        bins = psd(samples).astype('float32')
-        # print('BINS', bins.shape)
+        bins = psd(samples).astype(np.int16)
+        
+        # Log useful stuff
+        # print('Max', np.max(bins[:]), 'Min', np.min(bins[:]))
+        # print("Data shape is", bins.shape)
+        # print("Memory size is", bins.nbytes/1000/1000, "MB")
+
         # Get timestamp (to be removed)
         ts = datetime.datetime.now().timestamp()*1000
-        # Output max and min value of bins
-        print('MAX',np.max(bins), 'MIN',np.min(bins))
-
         # Send to api
         sio.emit(event='integration', data={'bins': bins.tobytes(), 'timestamp':ts}, namespace=env['NX_SOCKETIO_BACKEND_NAMESPACE'])
         looptime = time.time()-start
