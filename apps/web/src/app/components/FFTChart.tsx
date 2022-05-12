@@ -36,6 +36,8 @@ import { zeroArray2D } from 'scichart/utils/zeroArray2D';
 import { EDataChangeType } from 'scichart/Charting/Model/IDataSeries';
 import { ENumericFormat } from 'scichart/types/NumericFormat';
 import { VisibleRangeChangedArgs } from 'scichart/Charting/Visuals/Axis/VisibleRangeChangedArgs';
+import { ELayoutManagerType } from 'scichart/types/LayoutMangerType';
+import { SciChartVerticalGroup } from 'scichart/Charting/LayoutManager/SciChartVerticalGroup'
 
 interface FFTChartsProps {
   latestIntegration: Integration;
@@ -59,6 +61,8 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
     zeroArray2D([DISPLAYED_TIME_LENGTH, REBINNED_SPECTRA_LENGTH])
   );
   const renderableFFT = useRef<FastLineRenderableSeries>();
+
+  // const verticalGroup = useRef<SciChartVerticalGroup>();
 
   useEffect(() => {
     if (fftDSref.current) {
@@ -154,7 +158,7 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
 
   const initSpectogramChart = useCallback(async () => {
     const { sciChartSurface, wasmContext } = await SciChartSurface.create(
-      divElementIdSpectrogramChart
+      divElementIdSpectrogramChart,
     );
 
     const xAxis = new NumericAxis(wasmContext, {
@@ -209,11 +213,15 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
 
     return charts;
   }, [initFftChart, initSpectogramChart]);
-
+  
   useEffect(() => {
     let charts: SciChartSurface[];
+    const verticalGroup = new SciChartVerticalGroup(); // The vertical group aligns the charts
     initCharts().then((result) => {
       charts = result;
+
+      // The following line is needed to fix the charts' alignment
+      result.forEach((c)=>verticalGroup.addSurfaceToGroup(c));
     });
     return () => {
       // Ensure deleting charts on React component unmount
