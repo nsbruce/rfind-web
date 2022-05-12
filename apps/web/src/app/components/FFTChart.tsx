@@ -86,7 +86,7 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
 
   const initFftChart = useCallback(async () => {
     const { sciChartSurface, wasmContext } = await SciChartSurface.create(
-      divElementIdFftChart
+      divElementIdFftChart,
     );
 
     const xAxis = new NumericAxis(wasmContext, {
