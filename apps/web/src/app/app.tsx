@@ -3,6 +3,7 @@ import { io } from 'socket.io-client';
 import { Integration } from '@rfind-web/api-interfaces';
 import env from '@rfind-web/environment';
 import FFTChart from './components/FFTChart';
+import TimestampDisplay from './components/TimestampDisplay'
 import { DEFAULT_FFT_VALUES } from '@rfind-web/const';
 
 function App() {
@@ -21,7 +22,7 @@ function App() {
         '/frontend'
     );
     socket.on('client', (data: Integration) => {
-      setLatestIntegration({ time: data.time, bins: data.bins.map((n)=>Number(n/100)) });
+      setLatestIntegration({ time: new Date(data.time), bins: data.bins.map((n)=>Number(n/100)) });
     });
 
     // CLEAN UP THE EFFECT
@@ -37,9 +38,12 @@ function App() {
         flexDirection: 'column',
         height: '100vh',
         width: '100vw',
+        alignItems: 'center',
+        justifyContent:'left'
       }}
     >
       <FFTChart latestIntegration={latestIntegration} />
+      <TimestampDisplay date={latestIntegration.time} />
     </div>
   );
 }
