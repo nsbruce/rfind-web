@@ -35,6 +35,7 @@ import { HeatmapColorMap } from 'scichart/Charting/Visuals/RenderableSeries/Heat
 import { zeroArray2D } from 'scichart/utils/zeroArray2D';
 import { EDataChangeType } from 'scichart/Charting/Model/IDataSeries';
 import { ENumericFormat } from 'scichart/types/NumericFormat';
+import { VisibleRangeChangedArgs } from 'scichart/Charting/Visuals/Axis/VisibleRangeChangedArgs';
 
 interface FFTChartsProps {
   latestIntegration: Integration;
@@ -84,6 +85,20 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
     }
   }, [latestIntegration.bins]);
 
+  const enforceZoomConstraint = useCallback(
+    (data:VisibleRangeChangedArgs|undefined) => {
+      if (data) {
+        const initialIdxs = renderableFFT.current?.getIndicesRange(data.visibleRange);
+
+        let nextIdxs = initialIdxs;
+        if (renderableFFT.current && initialIdxs && initialIdxs?.diff < REBINNED_SPECTRA_LENGTH) {
+          const middleIdx = Math.round((initialIdxs.max+initialIdxs.min)/2);
+          nextIdxs = new NumberRange(middleIdx-REBINNED_SPECTRA_LENGTH/2, middleIdx+REBINNED_SPECTRA_LENGTH/2);
+          renderableFFT.current.xAxis.visibleRange = new NumberRange(FULL_FREQS[nextIdxs.min], FULL_FREQS[nextIdxs.max]);
+        }  
+      }
+    },[]);
+
   const initFftChart = useCallback(async () => {
     const { sciChartSurface, wasmContext } = await SciChartSurface.create(
       divElementIdFftChart,
@@ -96,6 +111,7 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
       labelPostfix: ' Hz',
     });
     xAxis.labelProvider.formatLabel = number2SIString;
+    xAxis.visibleRangeChanged.subscribe(enforceZoomConstraint)
     sciChartSurface.xAxes.add(xAxis);
 
     const yAxis = new NumericAxis(wasmContext, {
@@ -134,7 +150,7 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
     );
 
     return sciChartSurface;
-  }, []);
+  }, [enforceZoomConstraint]);
 
   const initSpectogramChart = useCallback(async () => {
     const { sciChartSurface, wasmContext } = await SciChartSurface.create(

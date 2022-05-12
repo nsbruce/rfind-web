@@ -24,7 +24,7 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "regenerator-runtime": "0.13.7",
-    "scichart": "^2.1.2290",
+    "scichart": "2.1.2290",
     "socket.io": "^4.4.1",
     "socket.io-client": "^4.4.1",
     "tslib": "^2.0.0"
