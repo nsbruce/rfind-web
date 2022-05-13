@@ -11,7 +11,7 @@ Object.keys(DEFAULT).forEach((key: string) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     environment[key] = envValue;
-    console.debug(`Replaced Environment Variable ${key}`);
+    // console.debug(`Replaced Environment Variable ${key}`);
   }
 });
 

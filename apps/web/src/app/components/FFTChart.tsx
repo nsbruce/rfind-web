@@ -28,6 +28,7 @@ import { FastLineRenderableSeries } from 'scichart/Charting/Visuals/RenderableSe
 import { ZoomExtentsModifier } from 'scichart/Charting/ChartModifiers/ZoomExtentsModifier';
 import { EXyDirection } from 'scichart/types/XyDirection';
 import { RubberBandXyZoomModifier } from 'scichart/Charting/ChartModifiers/RubberBandXyZoomModifier';
+import { ZoomPanModifier } from 'scichart/Charting/ChartModifiers/ZoomPanModifier';
 import { EResamplingMode } from 'scichart/Charting/Numerics/Resamplers/ResamplingMode';
 import { UniformHeatmapDataSeries } from 'scichart/Charting/Model/UniformHeatmapDataSeries';
 import { UniformHeatmapRenderableSeries } from 'scichart/Charting/Visuals/RenderableSeries/UniformHeatmapRenderableSeries';
@@ -35,6 +36,13 @@ import { HeatmapColorMap } from 'scichart/Charting/Visuals/RenderableSeries/Heat
 import { zeroArray2D } from 'scichart/utils/zeroArray2D';
 import { EDataChangeType } from 'scichart/Charting/Model/IDataSeries';
 import { ENumericFormat } from 'scichart/types/NumericFormat';
+import { VisibleRangeChangedArgs } from 'scichart/Charting/Visuals/Axis/VisibleRangeChangedArgs';
+import { SciChartVerticalGroup } from 'scichart/Charting/LayoutManager/SciChartVerticalGroup'
+import { XAxisDragModifier } from 'scichart/Charting/ChartModifiers/XAxisDragModifier';
+import { EDragMode } from 'scichart/types/DragMode';
+import { RolloverModifier } from 'scichart/Charting/ChartModifiers/RolloverModifier';
+import { render } from 'react-dom';
+import { SciChartSurfaceBase } from 'scichart/Charting/Visuals/SciChartSurfaceBase';
 
 interface FFTChartsProps {
   latestIntegration: Integration;
@@ -58,6 +66,8 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
     zeroArray2D([DISPLAYED_TIME_LENGTH, REBINNED_SPECTRA_LENGTH])
   );
   const renderableFFT = useRef<FastLineRenderableSeries>();
+
+  // const verticalGroup = useRef<SciChartVerticalGroup>();
 
   useEffect(() => {
     if (fftDSref.current) {
@@ -84,6 +94,20 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
     }
   }, [latestIntegration.bins]);
 
+  const enforceZoomConstraint = useCallback(
+    (data:VisibleRangeChangedArgs|undefined) => {
+      if (data) {
+        const initialIdxs = renderableFFT.current?.getIndicesRange(data.visibleRange);
+
+        let nextIdxs = initialIdxs;
+        if (renderableFFT.current && initialIdxs && initialIdxs?.diff < REBINNED_SPECTRA_LENGTH) {
+          const middleIdx = Math.round((initialIdxs.max+initialIdxs.min)/2);
+          nextIdxs = new NumberRange(middleIdx-REBINNED_SPECTRA_LENGTH/2, middleIdx+REBINNED_SPECTRA_LENGTH/2);
+          renderableFFT.current.xAxis.visibleRange = new NumberRange(FULL_FREQS[nextIdxs.min], FULL_FREQS[nextIdxs.max]);
+        }  
+      }
+    },[]);
+
   const initFftChart = useCallback(async () => {
     const { sciChartSurface, wasmContext } = await SciChartSurface.create(
       divElementIdFftChart,
@@ -94,8 +118,10 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
       axisAlignment: EAxisAlignment.Top,
       labelFormat: ENumericFormat.SignificantFigures,
       labelPostfix: ' Hz',
+      visibleRangeLimit: new NumberRange(FULL_FREQS[0], FULL_FREQS[FULL_FREQS.length - 1]),
     });
     xAxis.labelProvider.formatLabel = number2SIString;
+    xAxis.visibleRangeChanged.subscribe(enforceZoomConstraint)
     sciChartSurface.xAxes.add(xAxis);
 
     const yAxis = new NumericAxis(wasmContext, {
@@ -132,13 +158,26 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
         isAnimated: true,
       })
     );
-
+    sciChartSurface.chartModifiers.add(
+      new XAxisDragModifier({
+        dragMode: EDragMode.Panning
+      })
+    );
+    sciChartSurface.chartModifiers.add(
+      new RolloverModifier({
+        
+      })
+    )
+    if (renderableFFT.current) {
+      renderableFFT.current.rolloverModifierProps.tooltipColor = SciChartSurfaceBase.DEFAULT_THEME.labelBackgroundBrush
+      renderableFFT.current.rolloverModifierProps.tooltipLabelY = 'dBm/Hz'
+    }
     return sciChartSurface;
-  }, []);
+  }, [enforceZoomConstraint]);
 
   const initSpectogramChart = useCallback(async () => {
     const { sciChartSurface, wasmContext } = await SciChartSurface.create(
-      divElementIdSpectrogramChart
+      divElementIdSpectrogramChart,
     );
 
     const xAxis = new NumericAxis(wasmContext, {
@@ -193,11 +232,15 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
 
     return charts;
   }, [initFftChart, initSpectogramChart]);
-
+  
   useEffect(() => {
     let charts: SciChartSurface[];
+    const verticalGroup = new SciChartVerticalGroup(); // The vertical group aligns the charts
     initCharts().then((result) => {
       charts = result;
+
+      // The following line is needed to fix the charts' alignment
+      result.forEach((c)=>verticalGroup.addSurfaceToGroup(c));
     });
     return () => {
       // Ensure deleting charts on React component unmount
