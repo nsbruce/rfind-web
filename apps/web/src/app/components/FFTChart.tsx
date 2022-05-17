@@ -28,21 +28,19 @@ import { FastLineRenderableSeries } from 'scichart/Charting/Visuals/RenderableSe
 import { ZoomExtentsModifier } from 'scichart/Charting/ChartModifiers/ZoomExtentsModifier';
 import { EXyDirection } from 'scichart/types/XyDirection';
 import { RubberBandXyZoomModifier } from 'scichart/Charting/ChartModifiers/RubberBandXyZoomModifier';
-import { ZoomPanModifier } from 'scichart/Charting/ChartModifiers/ZoomPanModifier';
 import { EResamplingMode } from 'scichart/Charting/Numerics/Resamplers/ResamplingMode';
 import { UniformHeatmapDataSeries } from 'scichart/Charting/Model/UniformHeatmapDataSeries';
 import { UniformHeatmapRenderableSeries } from 'scichart/Charting/Visuals/RenderableSeries/UniformHeatmapRenderableSeries';
 import { HeatmapColorMap } from 'scichart/Charting/Visuals/RenderableSeries/HeatmapColorMap';
 import { zeroArray2D } from 'scichart/utils/zeroArray2D';
 import { EDataChangeType } from 'scichart/Charting/Model/IDataSeries';
-import { ENumericFormat } from 'scichart/types/NumericFormat';
 import { VisibleRangeChangedArgs } from 'scichart/Charting/Visuals/Axis/VisibleRangeChangedArgs';
 import { SciChartVerticalGroup } from 'scichart/Charting/LayoutManager/SciChartVerticalGroup';
 import { XAxisDragModifier } from 'scichart/Charting/ChartModifiers/XAxisDragModifier';
 import { EDragMode } from 'scichart/types/DragMode';
 import { RolloverModifier } from 'scichart/Charting/ChartModifiers/RolloverModifier';
-import { render } from 'react-dom';
 import { SciChartSurfaceBase } from 'scichart/Charting/Visuals/SciChartSurfaceBase';
+import TooltipDataTemplate from './Tooltip';
 
 interface FFTChartsProps {
   latestIntegration: Integration;
@@ -66,8 +64,6 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
     zeroArray2D([DISPLAYED_TIME_LENGTH, REBINNED_SPECTRA_LENGTH])
   );
   const renderableFFT = useRef<FastLineRenderableSeries>();
-
-  // const verticalGroup = useRef<SciChartVerticalGroup>();
 
   useEffect(() => {
     if (fftDSref.current) {
@@ -130,8 +126,6 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
     const xAxis = new NumericAxis(wasmContext, {
       drawMajorTickLines: false,
       axisAlignment: EAxisAlignment.Top,
-      labelFormat: ENumericFormat.SignificantFigures,
-      labelPostfix: ' Hz',
       visibleRangeLimit: new NumberRange(
         FULL_FREQS[0],
         FULL_FREQS[FULL_FREQS.length - 1]
@@ -180,11 +174,12 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
         dragMode: EDragMode.Panning,
       })
     );
-    sciChartSurface.chartModifiers.add(new RolloverModifier({}));
+    sciChartSurface.chartModifiers.add(new RolloverModifier({
+      tooltipDataTemplate: TooltipDataTemplate,
+    }));
     if (renderableFFT.current) {
       renderableFFT.current.rolloverModifierProps.tooltipColor =
         SciChartSurfaceBase.DEFAULT_THEME.labelBackgroundBrush;
-      renderableFFT.current.rolloverModifierProps.tooltipLabelY = 'dBm/Hz';
     }
     return sciChartSurface;
   }, [enforceZoomConstraint]);
@@ -206,7 +201,6 @@ const FFTChart: React.FC<FFTChartsProps> = (props) => {
     yAxis.labelProvider.formatLabel = (dataValue: number) => {
       let label = Math.abs(dataValue - DISPLAYED_TIME_LENGTH);
       label *= INTEGRATION_RATE; //seconds
-      // label /= 60 //minutes
       return label.toFixed(0);
     };
     sciChartSurface.yAxes.add(yAxis);
