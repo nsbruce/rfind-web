@@ -1,6 +1,6 @@
 # RFInd Web
 
-A web interface to monitor the output of an integrating spectrometer.
+A web interface to monitor the output of an integrating spectrometer. This application pairs with one of several data providers available in the [rfind-web-providers](https://github.com/nsbruce/rfind-web-providers) python module.
 
 ## Getting started
 
@@ -14,7 +14,7 @@ Run `yarn start:web` in one console to start the React front end and `yarn start
 
 ## Deploying
 
-For a walkthrough on deploying to an Ubuntu server see [the docs on deployment](./docs/deployment.md)
+For a walkthrough on deploying to an Ubuntu server see [the docs on deployment](./docs/deployment.md).
 
 ## Redeploying
 
