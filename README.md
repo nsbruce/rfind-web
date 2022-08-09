@@ -19,3 +19,9 @@ For a walkthrough on deploying to an Ubuntu server see [the docs on deployment](
 ## Redeploying
 
 If you make changes after the app is first deployed you can simply rebuild with `yarn build:all --prod` and then redeploy with `yarn redeploy:all`.
+
+There are also variants:
+ - `yarn build:api`/`yarn build:web`
+ - `yarn deploy:api`/`yarn deploy:web`
+
+Sometimes the cache is sticky which `yarn nx reset` fixes.
